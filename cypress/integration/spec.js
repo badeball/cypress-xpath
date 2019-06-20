@@ -46,6 +46,16 @@ describe('cypress-xpath', () => {
       cy.xpath('string(//*[@id="inserted"])').should('equal', 'inserted text')
     })
 
+    it('retries for a configurable amount of time', (done) => {
+      cy.on('fail', (err) => {
+        expect(err.message).to.contain('Timed out retrying')
+        done()
+      })
+
+      // the element will be inserted after 1 second, but we don't wait that long
+      cy.xpath('//*[@id="inserted"]', { timeout: 100 }).click()
+    })
+
     describe('chaining', () => {
       it('finds h1 within main', () => {
         // first assert that h1 doesn't exist as a child of the implicit document subject
